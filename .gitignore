@@ -6,3 +6,5 @@ renv/staging/
 renv/cache/
 data/raw/
 .Rprofile
+
+notebooks/.ipynb_checkpoints/*
