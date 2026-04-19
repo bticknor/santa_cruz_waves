@@ -1,4 +1,4 @@
-stations <- c("46239")
+stations <- c("46042")
 
 suffixes <- c("data_spec", "swdir", "swdir2", "swr1", "swr2")
 
