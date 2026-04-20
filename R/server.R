@@ -368,7 +368,10 @@ app_server <- function(input, output, session) {
   output$map <- renderLeaflet({
     m <- leaflet(buoys) %>%
       addProviderTiles(providers$Esri.WorldImagery) %>%
-      setView(lng = -122.2, lat = 36.9, zoom = 9)
+      fitBounds(
+        lng1 = -123.2, lat1 = 36.0,
+        lng2 = -121.6, lat2 = 37.6
+      )
 
     m <- add_wind_layer(m, wind_df())
     m <- add_wind_arrows(m, wind_df())
