@@ -1,4 +1,8 @@
-stations <- c("46239")
+# Read the CSV
+buoys <- read.csv("/home/benjamin/Projects/santa_cruz_waves/data/buoys.csv", stringsAsFactors = FALSE)
+
+# Extract station IDs
+stations <- unique(buoys$id)
 
 suffixes <- c("data_spec", "swdir", "swdir2", "swr1", "swr2")
 
@@ -20,4 +24,3 @@ for (st in stations) {
     )
   }
 }
-
