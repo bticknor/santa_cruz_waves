@@ -405,7 +405,7 @@ app_server <- function(input, output, session) {
     swdir_file <- paste0("data/raw/", buoy_id, ".swdir")
 
     validate(
-      need(file.exists(file), paste("No spectrum file found for station", buoy_id))
+      need(file.exists(file), paste("No spectrum data found for station", buoy_id))
     )
 
     plot_spectrum_with_direction(
