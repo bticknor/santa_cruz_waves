@@ -2,8 +2,15 @@ library(shiny)
 library(leaflet)
 
 app_ui <- fluidPage(
-  titlePanel("Santa Cruz Wave Buoys"),
-  leafletOutput("map", height = 500),
-  #verbatimTextOutput("debug_click"),
-  plotOutput("spectrum_plot", height = 350)
+  titlePanel("Current Santa Cruz Wave Conditions"),
+  fluidRow(
+    column(
+      width = 5,
+      plotOutput("spectrum_plot", height = 500)
+    ),
+    column(
+      width = 7,
+      leafletOutput("map", height = 800)
+    )
+  )
 )
