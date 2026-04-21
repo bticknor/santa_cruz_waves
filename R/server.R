@@ -234,7 +234,7 @@ plot_spectrum_with_direction <- function(spec_file,
       title = paste(
         station_id %||% "Station",
         "Swell Spectrum",
-        format(spec_df$timestamp_utc[1], tz = "UTC")
+        format(spec_df$timestamp_utc[1], tz = "America/Los_Angeles", usetz = TRUE)
       ),
       x = "Period (s)",
       y = expression(m^2 / Hz)
