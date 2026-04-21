@@ -4,7 +4,8 @@ buoys <- read.csv("/home/benjamin/Projects/santa_cruz_waves/data/buoys.csv", str
 # Extract station IDs
 stations <- unique(buoys$id)
 
-suffixes <- c("data_spec", "swdir", "swdir2", "swr1", "swr2")
+# suffixes <- c("data_spec", "swdir", "swdir2", "swr1", "swr2")
+suffixes <- c("data_spec", "swdir")
 
 dir.create("data/raw", recursive = TRUE, showWarnings = FALSE)
 
