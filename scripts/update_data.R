@@ -81,16 +81,15 @@ tryCatch({
 
   if (nrow(wind) == 0) stop("No wind data returned from Open-Meteo")
 
-  arrow_km   <- 12
-  max_speed  <- max(wind$speed_mps, na.rm = TRUE)
-  if (!is.finite(max_speed) || max_speed <= 0) max_speed <- 1
-  dir_toward <- (wind$direction_deg + 180) %% 360
-  angle_rad  <- (90 - dir_toward) * pi / 180
+  arrow_km      <- 12
+  max_speed_ref <- 20 * 0.44704  # 20 mph in m/s — full-length arrow at this speed
+  dir_toward    <- (wind$direction_deg + 180) %% 360
+  angle_rad     <- (90 - dir_toward) * pi / 180
 
   wind <- wind |>
     mutate(
-      dlat = (speed_mps / max_speed) * (arrow_km / 111) * sin(angle_rad),
-      dlng = (speed_mps / max_speed) * (arrow_km / (111 * cos(lat * pi / 180))) * cos(angle_rad),
+      dlat = (speed_mps / max_speed_ref) * (arrow_km / 111) * sin(angle_rad),
+      dlng = (speed_mps / max_speed_ref) * (arrow_km / (111 * cos(lat * pi / 180))) * cos(angle_rad),
       lat2 = lat + dlat,
       lng2 = lng + dlng
     )

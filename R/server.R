@@ -54,6 +54,7 @@ app_server <- function(input, output, session) {
 
     m <- add_wind_layer(m, wind_df())
     m <- add_wind_arrows(m, wind_df())
+    m <- add_wind_legend(m)
 
     m %>%
       addCircleMarkers(
