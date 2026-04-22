@@ -18,15 +18,30 @@ buoys <- data.frame(
 app_server <- function(input, output, session) {
   selected_buoy <- reactiveVal(NULL)
 
-  # add wind layer to map
+  spectrum_cache <- reactivePoll(
+    intervalMillis = 5 * 60 * 1000,
+    session = session,
+    checkFunc = function() {
+      files    <- file.path("data/processed", paste0(buoys$id, ".data_spec.rds"))
+      existing <- files[file.exists(files)]
+      if (length(existing) == 0) return(NA)
+      max(file.mtime(existing))
+    },
+    valueFunc = function() {
+      setNames(
+        lapply(buoys$id, function(id) {
+          f <- file.path("data/processed", paste0(id, ".data_spec.rds"))
+          if (!file.exists(f)) return(NULL)
+          tryCatch(readRDS(f), error = function(e) NULL)
+        }),
+        buoys$id
+      )
+    }
+  )
+
   wind_df <- reactive({
     wind_file <- "data/raw/wind_latest.rds"
-
-    if (file.exists(wind_file)) {
-      readRDS(wind_file)
-    } else {
-      NULL
-    }
+    if (file.exists(wind_file)) readRDS(wind_file) else NULL
   })
 
   output$map <- renderLeaflet({
@@ -54,7 +69,6 @@ app_server <- function(input, output, session) {
       )
   })
 
-
   observeEvent(input$map_marker_click, {
     print(input$map_marker_click)
     selected_buoy(input$map_marker_click$id)
@@ -68,18 +82,14 @@ app_server <- function(input, output, session) {
     req(selected_buoy())
 
     buoy_id <- selected_buoy()
-    file <- paste0("data/raw/", buoy_id, ".data_spec")
-    swdir_file <- paste0("data/raw/", buoy_id, ".swdir")
 
     validate(
-      need(file.exists(file), paste("No spectrum data found for station", buoy_id))
+      need(!is.null(spectrum_cache()[[buoy_id]]), paste("No spectrum data found for station", buoy_id))
     )
 
     plot_spectrum_with_direction(
-      spec_file  = file,
-      swdir_file = swdir_file,
-      station_id = buoy_id,
+      spectrum_data = spectrum_cache()[[buoy_id]],
+      station_id    = buoy_id
     )
-
   })
 }
