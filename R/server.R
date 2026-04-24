@@ -79,6 +79,18 @@ app_server <- function(input, output, session) {
     input$map_marker_click
   })
 
+  output$spectrum_area <- renderUI({
+    if (is.null(selected_buoy())) {
+      div(
+        style = "height: 500px; display: flex; align-items: center; justify-content: center;",
+        p("Click on a buoy to see recent swell spectrum data",
+          style = "color: #888; font-size: 16px;")
+      )
+    } else {
+      plotOutput("spectrum_plot", height = 500)
+    }
+  })
+
   output$spectrum_plot <- renderPlot({
     req(selected_buoy())
 

@@ -6,7 +6,7 @@ app_ui <- fluidPage(
   fluidRow(
     column(
       width = 5,
-      plotOutput("spectrum_plot", height = 500)
+      uiOutput("spectrum_area")
     ),
     column(
       width = 7,

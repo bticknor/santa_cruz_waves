@@ -5,6 +5,7 @@ renv/library/
 renv/staging/
 renv/cache/
 data/raw/
+data/processed/
 .Rprofile
 
 notebooks/.ipynb_checkpoints/*
