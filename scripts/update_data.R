@@ -100,4 +100,12 @@ tryCatch({
 error = function(e) message(format(Sys.time()), " Failed wind download: ", conditionMessage(e))
 )
 
+# --- Download tide data ---
+
+message(format(Sys.time()), " Downloading tide data")
+tryCatch(
+  source("scripts/fetch_tide_data.R"),
+  error = function(e) message(format(Sys.time()), " Failed tide download: ", conditionMessage(e))
+)
+
 message(format(Sys.time()), " Update complete")

@@ -6,7 +6,8 @@ app_ui <- fluidPage(
   fluidRow(
     column(
       width = 5,
-      uiOutput("spectrum_area")
+      uiOutput("spectrum_area"),
+      plotOutput("tide_plot", height = 250)
     ),
     column(
       width = 7,
