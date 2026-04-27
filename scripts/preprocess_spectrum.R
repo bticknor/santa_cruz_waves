@@ -1,5 +1,7 @@
-library(pracma)
-library(dplyr)
+suppressPackageStartupMessages({
+  library(pracma)
+  library(dplyr)
+})
 
 preprocess_spectrum <- function(spec_file, swdir_file, period_min = 3, period_max = 25) {
   cache_file <- file.path("data/processed", paste0(basename(spec_file), ".rds"))

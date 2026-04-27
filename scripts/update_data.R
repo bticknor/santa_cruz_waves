@@ -6,14 +6,19 @@
 # Cron example (every 2 hours):
 #   0 */2 * * * cd /home/benjamin/Projects/santa_cruz_waves && Rscript scripts/update_data.R >> logs/update_data.log 2>&1
 
-library(jsonlite)
-library(dplyr)
-library(purrr)
+suppressPackageStartupMessages({
+  library(jsonlite)
+  library(dplyr)
+  library(purrr)
+})
 
 source("scripts/preprocess_spectrum.R")
 
 buoys <- read.csv("data/buoys.csv", stringsAsFactors = FALSE)
 stations <- unique(buoys$id)
+
+# 46012 does not have swell spectrum data available from NOAA
+stations_with_spectrum <- setdiff(stations, "46012")
 
 dir.create("data/raw",       recursive = TRUE, showWarnings = FALSE)
 dir.create("data/processed", recursive = TRUE, showWarnings = FALSE)
@@ -21,7 +26,7 @@ dir.create("logs",           recursive = TRUE, showWarnings = FALSE)
 
 # --- Download NDBC buoy data ---
 
-for (st in stations) {
+for (st in stations_with_spectrum) {
   for (sx in c("data_spec", "swdir")) {
     url  <- sprintf("https://www.ndbc.noaa.gov/data/realtime2/%s.%s", st, sx)
     dest <- sprintf("data/raw/%s.%s", st, sx)
@@ -35,7 +40,7 @@ for (st in stations) {
 
 # --- Preprocess spectra ---
 
-for (st in stations) {
+for (st in stations_with_spectrum) {
   spec_file  <- sprintf("data/raw/%s.data_spec", st)
   swdir_file <- sprintf("data/raw/%s.swdir", st)
 
@@ -98,6 +103,14 @@ tryCatch({
   message(format(Sys.time()), " Wind data saved")
 },
 error = function(e) message(format(Sys.time()), " Failed wind download: ", conditionMessage(e))
+)
+
+# --- Download tide data ---
+
+message(format(Sys.time()), " Downloading tide data")
+tryCatch(
+  source("scripts/fetch_tide_data.R"),
+  error = function(e) message(format(Sys.time()), " Failed tide download: ", conditionMessage(e))
 )
 
 message(format(Sys.time()), " Update complete")

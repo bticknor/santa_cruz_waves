@@ -3,6 +3,7 @@ library(leaflet)
 
 source("R/plot_spectrum.R")
 source("R/plot_wind_layer.R")
+source("R/plot_tide.R")
 
 
 buoys <- data.frame(
@@ -44,6 +45,20 @@ app_server <- function(input, output, session) {
     if (file.exists(wind_file)) readRDS(wind_file) else NULL
   })
 
+  tide_data <- reactivePoll(
+    intervalMillis = 5 * 60 * 1000,
+    session = session,
+    checkFunc = function() {
+      f <- "data/raw/tide_latest.rds"
+      if (file.exists(f)) file.mtime(f) else NA
+    },
+    valueFunc = function() {
+      f <- "data/raw/tide_latest.rds"
+      if (!file.exists(f)) return(NULL)
+      tryCatch(readRDS(f), error = function(e) NULL)
+    }
+  )
+
   output$map <- renderLeaflet({
     m <- leaflet(buoys) %>%
       addProviderTiles(providers$Esri.WorldImagery) %>%
@@ -73,6 +88,11 @@ app_server <- function(input, output, session) {
   observeEvent(input$map_marker_click, {
     print(input$map_marker_click)
     selected_buoy(input$map_marker_click$id)
+  })
+
+  output$tide_plot <- renderPlot({
+    validate(need(!is.null(tide_data()), "No tide data available — run scripts/fetch_tide_data.R"))
+    plot_tide(tide_data())
   })
 
   output$debug_click <- renderPrint({
